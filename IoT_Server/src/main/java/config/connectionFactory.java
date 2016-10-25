@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * Created by hamzaghani on 24/10/2016.
  */
-public class ConnectionFactory {
+public class connectionFactory {
     String driverClassName = "com.mysql.jdbc.Driver";
     String dbUser = "root";
     String dbPwd = "ghani";
@@ -15,9 +15,9 @@ public class ConnectionFactory {
     String dbLocal = "";
     String connectionUrl = "jdbc:mysql://"+dbLocal+"/" + dBase;
 
-    private static ConnectionFactory connectionFactory = null;
+    private static connectionFactory connectionFactory = null;
 
-    private ConnectionFactory() {
+    private connectionFactory() {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
@@ -31,9 +31,9 @@ public class ConnectionFactory {
         return conn;
     }
 
-    public static ConnectionFactory getInstance() {
+    public static connectionFactory getInstance() {
         if (connectionFactory == null) {
-            connectionFactory = new ConnectionFactory();
+            connectionFactory = new connectionFactory();
         }
         return connectionFactory;
     }
