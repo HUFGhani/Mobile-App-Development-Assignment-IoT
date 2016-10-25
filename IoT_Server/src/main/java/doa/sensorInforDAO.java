@@ -5,7 +5,8 @@ import model.sensorInfor;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.sql.Date;
+import java.util.*;
 
 
 /**
@@ -26,16 +27,16 @@ public class sensorInforDAO {
         return connection;
     }
 
-    public void add (sensorInfor infor){
+    public void add (String sensorName, String sensorValue){
         try {
-            String query="";
+            String query="insert into sensorUsage(SensorName, SensorValue, TimeInserted) "+
+                    "values('"+sensorName+"','"+sensorValue+"', now());";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
-            ptmt.executeUpdate();
-            ptmt.setString(1,infor.getSensorID());
-            ptmt.setString(2,infor.getSensorName());
-            ptmt.setString(3,infor.getSensorValue());
-            ptmt.setDate(4, (Date) infor.getTimeInserted());
+            sensorInfor infor = new sensorInfor();
+            ptmt.setString(1,infor.getSensorName());
+            ptmt.setString(2,infor.getSensorValue());
+            ptmt.setDate(3, (Date) infor.getTimeInserted());
             ptmt.executeUpdate();
             log.info("Data Added Successfully!!!");
 
@@ -84,4 +85,6 @@ public class sensorInforDAO {
             log.error(e);
         }
     }
+
+
 }
