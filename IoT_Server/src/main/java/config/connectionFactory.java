@@ -1,5 +1,7 @@
 package config;
 
+import org.apache.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,6 +10,7 @@ import java.sql.SQLException;
  * Created by hamzaghani on 24/10/2016.
  */
 public class connectionFactory {
+    private static final Logger log = Logger.getLogger(connectionFactory.class);
     String driverClassName = "com.mysql.jdbc.Driver";
     String dbUser = "root";
     String dbPwd = "ghani";
@@ -21,7 +24,7 @@ public class connectionFactory {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -37,4 +40,6 @@ public class connectionFactory {
         }
         return connectionFactory;
     }
+
+
 }

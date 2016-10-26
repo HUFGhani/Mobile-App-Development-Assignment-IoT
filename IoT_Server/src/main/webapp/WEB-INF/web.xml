@@ -9,9 +9,17 @@
     <servlet-name>sensorDB</servlet-name>
     <servlet-class>controller.sensorDB</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>locationDB</servlet-name>
+    <servlet-class>controller.locationDB</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>sensorDB</servlet-name>
     <url-pattern>/sensorDB</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>locationDB</servlet-name>
+    <url-pattern>/locationDB</url-pattern>
   </servlet-mapping>
 
 

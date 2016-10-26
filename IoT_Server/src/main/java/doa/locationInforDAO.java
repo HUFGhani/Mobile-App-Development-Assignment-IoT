@@ -1,25 +1,26 @@
 package doa;
 
 import config.connectionFactory;
+import model.locationInfor;
 import model.sensorInfor;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
-import java.sql.Date;
-import java.util.*;
-
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
- * Created by hamzaghani on 24/10/2016.
+ * Created by hamzaghani on 26/10/2016.
  */
-public class sensorInforDAO {
+public class locationInforDAO {
 
-    private static final Logger log = Logger.getLogger(sensorInforDAO.class);
+    private static final Logger log = Logger.getLogger(locationInforDAO.class);
     Connection conn;
     PreparedStatement ptmt;
     ResultSet output;
-    public sensorInforDAO() {
-    }
 
     private Connection getConnection() throws SQLException{
         Connection connection;
@@ -27,16 +28,16 @@ public class sensorInforDAO {
         return connection;
     }
 
-    public void add (String sensorName, String sensorValue){
+    public void add (float lan, float lat){
         try {
             String query="insert into sensorUsage(SensorName, SensorValue, TimeInserted) "+
-                    "values('"+sensorName+"','"+sensorValue+"', now());";
+                    "values('"+lan+"','"+lat+"', now());";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
-            sensorInfor infor = new sensorInfor();
-            ptmt.setString(1,infor.getSensorName());
-            ptmt.setString(2,infor.getSensorValue());
-            ptmt.setDate(3, (Date) infor.getTimeInserted());
+            locationInfor infor = new locationInfor();
+            ptmt.setString(1,infor.getDeviceID());
+            ptmt.setBigDecimal(2, BigDecimal.valueOf(infor.getLat()));
+            ptmt.setBigDecimal(3, BigDecimal.valueOf(infor.getLon()));
             ptmt.executeUpdate();
             log.info("Data Added Successfully!!!");
 
@@ -47,28 +48,28 @@ public class sensorInforDAO {
         }
     }
 
-    public ArrayList<sensorInfor> getdata(){
-        ArrayList<sensorInfor> sensor = null;
+    public ArrayList<locationInfor> getdata(){
+        ArrayList<locationInfor> location = null;
         try {
-            String query="Select * from sensor";
+            String query="Select * from location";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
             output = ptmt.executeQuery();
-            sensor=new ArrayList<sensorInfor>();
+            location=new ArrayList<locationInfor>();
             while (output.next()){
-                sensorInfor infor = new sensorInfor();
-                infor.setSensorID(output.getString(""));
-                infor.setSensorName(output.getString(""));
-                infor.setSensorValue(output.getString(""));
+                locationInfor infor = new locationInfor();
+                infor.setDeviceID(output.getString(""));
+                infor.setLat(output.getBigDecimal());
+                infor.setLon(output.getBigDecimal());
                 infor.setTimeInserted(output.getTime(""));
-                sensor.add(infor);
+                location.add(infor);
             }
         } catch (SQLException e) {
             log.error(e);
         } finally {
             destory();
         }
-        return sensor;
+        return location;
     }
 
     private void destory(){
@@ -85,6 +86,4 @@ public class sensorInforDAO {
             log.error(e);
         }
     }
-
-
 }
