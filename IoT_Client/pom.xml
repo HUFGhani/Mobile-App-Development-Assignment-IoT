@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>IoT_Client</groupId>
+  <artifactId>IoT_Client</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>IoT_Client</name>
+  <url>http://maven.apache.org</url>
+
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+      <jdk.version>1.7</jdk.version>
+      <jline.version>2.14.2</jline.version>
+      <junit.version>4.11</junit.version>
+      <log4j.version>1.2.17</log4j.version>
+
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/jline/jline -->
+    <dependency>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
+      <version>${jline.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.phidgets</groupId>
+      <artifactId>phidget</artifactId>
+      <version>2.1</version>
+      <scope>compile</scope>
+    </dependency>
+
+  </dependencies>
+  <build>
+  <finalName>IoT_Client</finalName>
+  <plugins>
+    <!-- download source code in Eclipse, best practice -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-eclipse-plugin</artifactId>
+      <version>2.9</version>
+      <configuration>
+        <downloadSources>true</downloadSources>
+        <downloadJavadocs>false</downloadJavadocs>
+      </configuration>
+    </plugin>
+
+    <!-- Set a JDK compiler level -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>2.3.2</version>
+      <configuration>
+        <source>${jdk.version}</source>
+        <target>${jdk.version}</target>
+      </configuration>
+    </plugin>
+
+    <!-- Make this jar executable -->
+    <!-- Make this jar executable -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <configuration>
+<!--        <excludes>
+          <exclude>**/log4j.properties</exclude>
+        </excludes>-->
+        <archive>
+          <manifest>
+            <addClasspath>true</addClasspath>
+            <mainClass>IoT_Client.RFIDExample1</mainClass>
+            <classpathPrefix>dependency-jars/</classpathPrefix>
+          </manifest>
+        </archive>
+      </configuration>
+    </plugin>
+
+    <!-- Copy project dependency -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-dependency-plugin</artifactId>
+      <version>2.5.1</version>
+      <executions>
+        <execution>
+          <id>copy-dependencies</id>
+          <phase>package</phase>
+          <goals>
+            <goal>copy-dependencies</goal>
+          </goals>
+          <configuration>
+            <!-- exclude junit, we need runtime dependency only -->
+            <includeScope>runtime</includeScope>
+            <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+
+  </plugins>
+  </build>
+
+
+</project>
