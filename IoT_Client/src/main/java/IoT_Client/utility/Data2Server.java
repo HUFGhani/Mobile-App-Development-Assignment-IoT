@@ -1,4 +1,4 @@
-package IoT_Client.sensors;
+package IoT_Client.utility;
 
 /**
  * Created by hamzaghani on 31/10/2016.
