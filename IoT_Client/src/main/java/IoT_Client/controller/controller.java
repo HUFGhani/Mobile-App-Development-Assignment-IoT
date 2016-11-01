@@ -8,9 +8,7 @@ import IoT_Client.utility.SensorsInfor;
  * Created by hamzaghani on 28/10/2016.
  */
 public class Controller {
-    private static DoorRFID rfid;
-    private static DoorMotorServo moto;
-    SensorsInfor infor;
+    private static DoorRFID doorRFID;
 
     public static void main(String[] args){
         rfid = new DoorRFID();

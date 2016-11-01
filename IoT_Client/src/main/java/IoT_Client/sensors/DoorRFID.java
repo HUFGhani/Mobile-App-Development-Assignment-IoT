@@ -9,6 +9,11 @@ import com.phidgets.event.TagLossEvent;
 import com.phidgets.event.TagLossListener;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Created by hamzaghani on 31/10/2016.
  */
@@ -18,6 +23,12 @@ public class DoorRFID implements TagLossListener, TagGainListener {
     private RFIDPhidget rfid;
     private SensorsInfor infor;
     private DoorMotorServo moto;
+
+    static String mainURL= "http://localhost:8080/";
+    URL url;
+    HttpURLConnection conn;
+    BufferedReader rd;
+    String fullURL ;
 
     public DoorRFID()  {
         infor = new SensorsInfor();
@@ -37,7 +48,7 @@ public class DoorRFID implements TagLossListener, TagGainListener {
                 try {
                     Thread.sleep(500);
                 } catch (Throwable t) {
-                    t.printStackTrace();
+                    log.error(t);
                 }
         }catch (PhidgetException e){
             log.error(e);
@@ -71,5 +82,28 @@ public class DoorRFID implements TagLossListener, TagGainListener {
     @Override
     public void tagLost(TagLossEvent tagLossEvent) {
 
+    }
+
+    public String Data2Server() {
+
+        fullURL= mainURL;
+        System.out.println("Sending data to: "+fullURL);
+        String line;
+        String result = "";
+
+        try {
+            url = new URL(fullURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            while ((line = rd.readLine()) != null) {
+                result += line;
+            }
+            rd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
