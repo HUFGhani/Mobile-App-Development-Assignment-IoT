@@ -24,15 +24,17 @@ public class DoorRFID implements TagLossListener, TagGainListener {
     private SensorsInfor infor;
     private DoorMotorServo moto;
 
-    static String mainURL= "http://localhost:8080/";
+    static String mainURL= "http://localhost:8080/IoT_Server/sensorDB";
     URL url;
     HttpURLConnection conn;
     BufferedReader rd;
     String fullURL ;
 
+
     public DoorRFID()  {
         infor = new SensorsInfor();
         moto= new DoorMotorServo();
+        infor.setIsDooropen(false);
         try {
 
             rfid = new RFIDPhidget();
@@ -46,7 +48,7 @@ public class DoorRFID implements TagLossListener, TagGainListener {
 
             while (true)
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(5000);
                 } catch (Throwable t) {
                     log.error(t);
                 }
@@ -65,14 +67,14 @@ public class DoorRFID implements TagLossListener, TagGainListener {
                 rfid.setLEDOn(false);
                 moto.openlock();
                 infor.setIsDooropen(true);
-                Thread.sleep(500);
+                Data2Server();
                 if (rfid.getLEDOn() == false) {
                     rfid.setLEDOn(true);
                     moto.closelock();
+                    infor.setIsDooropen(false);
+                    Data2Server();
                 }
             } catch (PhidgetException e) {
-                log.error(e);
-            } catch (InterruptedException e) {
                 log.error(e);
             }
         }
@@ -86,7 +88,7 @@ public class DoorRFID implements TagLossListener, TagGainListener {
 
     public String Data2Server() {
 
-        fullURL= mainURL;
+        fullURL= mainURL + "?sensorname=DoorRFID&sensorvalue="+infor.getIsDooropen();
         System.out.println("Sending data to: "+fullURL);
         String line;
         String result = "";
@@ -94,7 +96,7 @@ public class DoorRFID implements TagLossListener, TagGainListener {
         try {
             url = new URL(fullURL);
             conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod("POST");
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             while ((line = rd.readLine()) != null) {
                 result += line;

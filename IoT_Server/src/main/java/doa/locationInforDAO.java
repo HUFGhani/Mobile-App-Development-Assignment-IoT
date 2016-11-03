@@ -2,10 +2,8 @@ package doa;
 
 import config.connectionFactory;
 import model.locationInfor;
-import model.sensorInfor;
 import org.apache.log4j.Logger;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +26,7 @@ public class locationInforDAO {
         return connection;
     }
 
-    public void add (float lan, float lat){
+    public void add (String lan, String lat){
         try {
             String query="insert into sensorUsage(SensorName, SensorValue, TimeInserted) "+
                     "values('"+lan+"','"+lat+"', now());";
@@ -36,8 +34,8 @@ public class locationInforDAO {
             ptmt=conn.prepareStatement(query);
             locationInfor infor = new locationInfor();
             ptmt.setString(1,infor.getDeviceID());
-            ptmt.setBigDecimal(2, BigDecimal.valueOf(infor.getLat()));
-            ptmt.setBigDecimal(3, BigDecimal.valueOf(infor.getLon()));
+            ptmt.setFloat(2, infor.getLat());
+            ptmt.setFloat(3, infor.getLon());
             ptmt.executeUpdate();
             log.info("Data Added Successfully!!!");
 
@@ -59,9 +57,9 @@ public class locationInforDAO {
             while (output.next()){
                 locationInfor infor = new locationInfor();
                 infor.setDeviceID(output.getString(""));
-                infor.setLat(output.getBigDecimal());
-                infor.setLon(output.getBigDecimal());
-                infor.setTimeInserted(output.getTime(""));
+                infor.setLat(output.getFloat("s"));
+                infor.setLon(output.getFloat("s"));
+                infor.setTimeInserted(output.getTime("s"));
                 location.add(infor);
             }
         } catch (SQLException e) {

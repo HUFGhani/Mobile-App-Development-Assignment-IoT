@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +38,8 @@ public class sensorDB extends HttpServlet {
             String sensorNameStr = request.getParameter("sensorname");
             String sensorValueStr = request.getParameter("sensorvalue");
             if (!(sensorNameStr == null) && !(sensorValueStr == null)) {
-                infor.add(sensorNameStr, sensorValueStr);
+                //infor.add(sensorNameStr, sensorValueStr);
+                System.out.println(sensorNameStr + "  "  + sensorValueStr);
             }else{
                 log.error("bad data has been sent");
             }
@@ -52,10 +52,10 @@ public class sensorDB extends HttpServlet {
                 "\": \"" + lastValidSensorValueStr + "\"}}";
 */
 
-            PrintWriter out = response.getWriter();
+           // PrintWriter out = response.getWriter();
             //System.out.println("DEBUG: json return: "+json);
             //out.print(json);
-            out.close();
+           // out.close();
 
         }
 

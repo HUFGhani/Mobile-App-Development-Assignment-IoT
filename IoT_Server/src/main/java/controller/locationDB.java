@@ -1,7 +1,6 @@
 package controller;
 
 import doa.locationInforDAO;
-import doa.sensorInforDAO;
 import model.locationInfor;
 import org.apache.log4j.Logger;
 
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +37,7 @@ public class locationDB extends HttpServlet {
             if (!(lan == null) && !(log == null)) {
                 infor.add( lan, log);
             }else{
-                log.error("bad data has been sent");
+
             }
 
         }else {

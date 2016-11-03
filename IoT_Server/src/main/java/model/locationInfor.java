@@ -25,7 +25,7 @@ public class locationInfor {
         return lon;
     }
 
-    public locationInfor setLon(Float lon) {
+    public locationInfor setLon(float lon) {
         this.lon = lon;
         return this;
     }
@@ -34,7 +34,7 @@ public class locationInfor {
         return lat;
     }
 
-    public locationInfor setLat(Float lat) {
+    public locationInfor setLat(float lat) {
         this.lat = lat;
         return this;
     }
