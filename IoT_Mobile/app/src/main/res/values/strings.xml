@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">IoT_Mobile</string>
-    <string name="latitude_string">Latitude now:</string>
-    <string name="longitude_string">Longitude now:</string>
-    <string name="map">map</string>
-</resources>
-
