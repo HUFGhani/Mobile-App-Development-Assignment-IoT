@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -45,17 +46,10 @@ public class sensorDB extends HttpServlet {
             }
 
         }else {
-            response.setContentType("application/json");
-
-/*
-        String json = "{\"sensor\": {\"" + lastValidSensorNameStr +
-                "\": \"" + lastValidSensorValueStr + "\"}}";
-*/
-
-           // PrintWriter out = response.getWriter();
-            //System.out.println("DEBUG: json return: "+json);
-            //out.print(json);
-           // out.close();
+            response.setContentType("text/plain");
+            PrintWriter out = response.getWriter();
+            out.print("hamza ghani is the best");
+            out.close();
 
         }
 

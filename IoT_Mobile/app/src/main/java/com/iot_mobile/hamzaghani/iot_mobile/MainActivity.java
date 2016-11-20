@@ -3,11 +3,15 @@ package com.iot_mobile.hamzaghani.iot_mobile;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +22,10 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+
 public class MainActivity extends Activity implements LocationListener {
+    String URL;
+    private ProgressDialog pDialog;
 
     private static final int REQUEST_LOCATION = 2;
 
@@ -32,15 +39,17 @@ public class MainActivity extends Activity implements LocationListener {
     private  double fusedLongitude = 0.0;
 
 
-    private static int UPDATE_INTERVAL = 1000; // 10 sec
+    private static int UPDATE_INTERVAL = 100000; // 10 sec
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 1; // 1 meters
+
+    private static final String baseurl="http://10.21.210.123:8080/IoT_Server/locationDB";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initializeViews();
+
 
         if (checkPlayServices()) {
             startFusedLocation();
@@ -49,10 +58,6 @@ public class MainActivity extends Activity implements LocationListener {
 
     }
 
-    private void initializeViews() {
-        latitude = (TextView) findViewById(R.id.textview_latitude);
-        longitude = (TextView) findViewById(R.id.textview_longitude);
-    }
 
     @Override
     protected void onStop() {
@@ -169,11 +174,15 @@ public class MainActivity extends Activity implements LocationListener {
         setFusedLatitude(location.getLatitude());
         setFusedLongitude(location.getLongitude());
 
-        Toast.makeText(getApplicationContext(), "NEW LOCATION RECEIVED", Toast.LENGTH_LONG).show();
+        sendDate2Server();
 
-        latitude.setText(getString(R.string.latitude_string) +" "+ getFusedLatitude());
-        longitude.setText(getString(R.string.longitude_string) +" "+ getFusedLongitude());
     }
+
+    private void sendDate2Server() {
+
+        new sendlcation().execute();
+    }
+
 
     public void setFusedLatitude(double lat) {
         fusedLatitude = lat;
@@ -189,5 +198,26 @@ public class MainActivity extends Activity implements LocationListener {
 
     public double getFusedLongitude() {
         return fusedLongitude;
+    }
+
+    public void map (View view){
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+    }
+
+    private class sendlcation extends AsyncTask <Void, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            URL = baseurl +"?lat="+ getFusedLatitude()+"&lon="+ getFusedLongitude();
+            // Creating service handler class instance
+            ServiceHandler sh = new ServiceHandler();
+
+            // Making a request to url and getting response
+            sh.makeServiceCall(URL, ServiceHandler.POST);
+
+            return null;
+        }
+
     }
 }

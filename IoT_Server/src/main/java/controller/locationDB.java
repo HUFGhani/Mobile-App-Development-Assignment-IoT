@@ -22,6 +22,7 @@ public class locationDB extends HttpServlet {
     locationInforDAO infor;
     ArrayList<locationInfor> location;
     String getData;
+    String lat, lon;
 
     public void init() throws ServletException {
         infor= new locationInforDAO();
@@ -31,32 +32,35 @@ public class locationDB extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         getData = request.getParameter("data");
-        if (getData==null){
-            String lan = request.getParameter("lan");
-            String log = request.getParameter("lat");
-            if (!(lan == null) && !(log == null)) {
-                infor.add( lan, log);
-            }else{
 
+        if (getData==null){
+            lat = request.getParameter("lat");
+            lon = request.getParameter("lon");
+            if (!(lat == null) && !(lon == null)) {
+                //infor.add(sensorNameStr, sensorValueStr);
+                response.setContentType("text/plain");
+                PrintWriter out = response.getWriter();
+                out.print(lat + "" + lon);
+                out.close();
+                System.out.println(lat + "  "  + lon);
+            }else{
+                log.error("bad data has been sent");
             }
 
         }else {
-            response.setContentType("application/json");
-
-/*
-        String json = "{\"sensor\": {\"" + lastValidSensorNameStr +
-                "\": \"" + lastValidSensorValueStr + "\"}}";
-*/
-
+            response.setContentType("text/plain");
             PrintWriter out = response.getWriter();
-            //System.out.println("DEBUG: json return: "+json);
-            //out.print(json);
+            out.print(lat + "" + lon);
             out.close();
+            System.out.println(lat + "  "  + lon);
 
         }
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request,response);
+
+
     }
 }
