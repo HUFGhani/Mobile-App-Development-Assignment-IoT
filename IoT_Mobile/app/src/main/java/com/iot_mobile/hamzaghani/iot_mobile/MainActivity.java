@@ -4,14 +4,12 @@ package com.iot_mobile.hamzaghani.iot_mobile;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +41,7 @@ public class MainActivity extends Activity implements LocationListener {
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 1; // 1 meters
 
-    private static final String baseurl="http://10.21.210.123:8080/IoT_Server/locationDB";
+    private static final String baseurl="http:// 10.21.210.123:8080/IoT_Server/locationDB";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,10 +196,6 @@ public class MainActivity extends Activity implements LocationListener {
 
     public double getFusedLongitude() {
         return fusedLongitude;
-    }
-
-    public void map (View view){
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
     }
 
     private class sendlcation extends AsyncTask <Void, Void, Void> {

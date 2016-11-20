@@ -38,19 +38,18 @@ public class locationDB extends HttpServlet {
             lon = request.getParameter("lon");
             if (!(lat == null) && !(lon == null)) {
                 //infor.add(sensorNameStr, sensorValueStr);
-                response.setContentType("text/plain");
-                PrintWriter out = response.getWriter();
-                out.print(lat + "" + lon);
-                out.close();
-                System.out.println(lat + "  "  + lon);
+
             }else{
                 log.error("bad data has been sent");
             }
 
         }else {
-            response.setContentType("text/plain");
+
+            response.setContentType("application/json");
+            String json = "{\"location\": {\"" + lat +
+                    "\": \"" + lon + "\"}}";
             PrintWriter out = response.getWriter();
-            out.print(lat + "" + lon);
+            out.print(json);
             out.close();
             System.out.println(lat + "  "  + lon);
 

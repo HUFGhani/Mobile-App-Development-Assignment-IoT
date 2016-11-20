@@ -49,6 +49,7 @@ public class DoorRFID implements TagLossListener, TagGainListener {
             while (true)
                 try {
                     Thread.sleep(5000);
+                    getDataFromServer();
                 } catch (Throwable t) {
                     log.error(t);
                 }
@@ -89,6 +90,29 @@ public class DoorRFID implements TagLossListener, TagGainListener {
     public String Data2Server() {
 
         fullURL= mainURL + "?sensorname=DoorRFID&sensorvalue="+infor.getIsDooropen();
+        System.out.println("Sending data to: "+fullURL);
+        String line;
+        String result = "";
+
+        try {
+            url = new URL(fullURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            while ((line = rd.readLine()) != null) {
+                result += line;
+            }
+            rd.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public String getDataFromServer() {
+
+        fullURL= mainURL + "?getdata";
         System.out.println("Sending data to: "+fullURL);
         String line;
         String result = "";
