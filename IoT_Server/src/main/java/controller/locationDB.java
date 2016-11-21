@@ -45,11 +45,11 @@ public class locationDB extends HttpServlet {
 
         }else {
 
-            response.setContentType("application/json");
+            /*response.setContentType("application/json");
             String json = "{\"location\": {\"" + lat +
-                    "\": \"" + lon + "\"}}";
+                    "\": \"" + lon + "\"}}";*/
             PrintWriter out = response.getWriter();
-            out.print(json);
+            out.print(lat + " " +lon);
             out.close();
             System.out.println(lat + "  "  + lon);
 

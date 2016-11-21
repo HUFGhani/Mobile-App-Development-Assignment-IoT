@@ -2,11 +2,14 @@ package com.iot_mobile.hamzaghani.iot_mobile;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,6 +31,11 @@ public class MainActivity extends Activity implements LocationListener {
     private double fusedLatitude = 0.0;
     private  double fusedLongitude = 0.0;
 
+
+    String URL;
+    private static final String baseurl="http://10.182.17.145:8080/IoT_Server/locationDB";
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +48,6 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
     }
-
 
     @Override
     protected void onStop() {
@@ -56,7 +63,8 @@ public class MainActivity extends Activity implements LocationListener {
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
                 Toast.makeText(getApplicationContext(),
-                        "This device is supported. Please download google play services", Toast.LENGTH_LONG)
+                        "This device is supported. Please download google play services",
+                                Toast.LENGTH_LONG)
                         .show();
             } else {
                 Toast.makeText(getApplicationContext(),
@@ -68,7 +76,6 @@ public class MainActivity extends Activity implements LocationListener {
         }
         return true;
     }
-
 
     public void startFusedLocation() {
         if (mGoogleApiClient == null) {
@@ -101,7 +108,6 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
 
-
     public void registerRequestUpdate(final LocationListener listener) {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED || (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -130,7 +136,8 @@ public class MainActivity extends Activity implements LocationListener {
                 public void run() {
                     // TODO Auto-generated method stub
                     try {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, listener);
+                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                                mLocationRequest, listener);
                     } catch (SecurityException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
@@ -141,7 +148,7 @@ public class MainActivity extends Activity implements LocationListener {
                         registerRequestUpdate(listener);
                     }
                 }
-            }, 1000);
+            }, 10000);
         }
     }
 
@@ -154,6 +161,12 @@ public class MainActivity extends Activity implements LocationListener {
         setFusedLatitude(location.getLatitude());
         setFusedLongitude(location.getLongitude());
 
+        sendDate2Server();
+
+    }
+
+    private void sendDate2Server() {
+        new sendLocation().execute();
     }
 
     public void setFusedLatitude(double lat) {
@@ -170,5 +183,26 @@ public class MainActivity extends Activity implements LocationListener {
 
     public double getFusedLongitude() {
         return fusedLongitude;
+    }
+
+    public void map(View view){
+        Intent inent = new Intent(this, MapsActivity.class);
+        startActivity(inent);
+    }
+
+    private class sendLocation extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            URL = baseurl +"?lat="+ getFusedLatitude()+"&lon="+ getFusedLongitude();
+            // Creating service handler class instance
+            ServiceHandler sh = new ServiceHandler();
+
+            // Making a request to url and getting response
+            sh.makeServiceCall(URL, ServiceHandler.POST);
+
+            return null;
+        }
+
     }
 }
