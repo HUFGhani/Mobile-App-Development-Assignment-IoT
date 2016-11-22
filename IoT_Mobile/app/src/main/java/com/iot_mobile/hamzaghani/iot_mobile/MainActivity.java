@@ -2,14 +2,12 @@ package com.iot_mobile.hamzaghani.iot_mobile;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -32,8 +30,8 @@ public class MainActivity extends Activity implements LocationListener {
     private  double fusedLongitude = 0.0;
 
 
-    String URL;
-    private static final String baseurl="http://10.182.17.145:8080/IoT_Server/locationDB";
+    String url;
+    private static final String baseURL="http://10.182.17.145:8080/IoT_Server/";
 
 
     @Override
@@ -161,11 +159,16 @@ public class MainActivity extends Activity implements LocationListener {
         setFusedLatitude(location.getLatitude());
         setFusedLongitude(location.getLongitude());
 
-        sendDate2Server();
+        sendData2Server();
+        receiveDataFromServer();
 
     }
 
-    private void sendDate2Server() {
+    private void receiveDataFromServer() {
+        new receiveData().execute();
+    }
+
+    private void sendData2Server() {
         new sendLocation().execute();
     }
 
@@ -185,24 +188,35 @@ public class MainActivity extends Activity implements LocationListener {
         return fusedLongitude;
     }
 
-    public void map(View view){
-        Intent inent = new Intent(this, MapsActivity.class);
-        startActivity(inent);
-    }
 
     private class sendLocation extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            URL = baseurl +"?lat="+ getFusedLatitude()+"&lon="+ getFusedLongitude();
+            url = baseURL +"locationDB?lat="+ getFusedLatitude()+"&lon="+ getFusedLongitude();
             // Creating service handler class instance
             ServiceHandler sh = new ServiceHandler();
 
             // Making a request to url and getting response
-            sh.makeServiceCall(URL, ServiceHandler.POST);
+            sh.makeServiceCall(url, ServiceHandler.POST);
 
             return null;
         }
+    }
 
+    private class receiveData extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            url =baseURL + "sensorDB?getdata";
+
+            ServiceHandler sh = new ServiceHandler();
+
+            sh.makeServiceCall(url,ServiceHandler.GET);
+
+            
+
+            return null;
+        }
     }
 }

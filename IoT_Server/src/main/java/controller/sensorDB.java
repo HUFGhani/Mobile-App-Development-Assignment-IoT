@@ -1,5 +1,6 @@
 package controller;
 
+import com.google.gson.Gson;
 import doa.sensorInforDAO;
 import model.sensorInfor;
 import org.apache.log4j.Logger;
@@ -24,7 +25,7 @@ public class sensorDB extends HttpServlet {
     sensorInforDAO infor;
     ArrayList<sensorInfor> sensor;
     String getData;
-
+    Gson gson = new Gson();
     public void init() throws ServletException {
         infor= new sensorInforDAO();
         sensor= new ArrayList<sensorInfor>();
@@ -33,7 +34,7 @@ public class sensorDB extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_OK);
-        getData = request.getParameter("data");
+        getData = request.getParameter("getdata");
 
         if (getData==null){
             String sensorNameStr = request.getParameter("sensorname");
@@ -46,10 +47,13 @@ public class sensorDB extends HttpServlet {
             }
 
         }else {
-            response.setContentType("text/plain");
+            response.setContentType("application/json");
+
+            String json = gson.toJson(sensor);
             PrintWriter out = response.getWriter();
-            out.print("hamza ghani is the best");
+            out.print(json);
             out.close();
+            System.out.println(json);
 
         }
 

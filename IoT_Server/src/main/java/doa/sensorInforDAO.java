@@ -4,9 +4,11 @@ import config.connectionFactory;
 import model.sensorInfor;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 /**
@@ -36,7 +38,6 @@ public class sensorInforDAO {
             sensorInfor infor = new sensorInfor();
             ptmt.setString(1,infor.getSensorName());
             ptmt.setString(2,infor.getSensorValue());
-            ptmt.setDate(3, (Date) infor.getTimeInserted());
             ptmt.executeUpdate();
             log.info("Data Added Successfully!!!");
 

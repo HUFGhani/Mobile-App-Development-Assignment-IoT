@@ -1,5 +1,6 @@
 package controller;
 
+import com.google.gson.Gson;
 import doa.locationInforDAO;
 import model.locationInfor;
 import org.apache.log4j.Logger;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 /**
  * Created by hamzaghani on 26/10/2016.
@@ -20,23 +20,26 @@ import java.util.ArrayList;
 public class locationDB extends HttpServlet {
     private static final Logger log = Logger.getLogger(locationDB.class);
     locationInforDAO infor;
-    ArrayList<locationInfor> location;
+    locationInfor location;
     String getData;
     String lat, lon;
+     Gson gson = new Gson();
 
     public void init() throws ServletException {
         infor= new locationInforDAO();
-        location= new ArrayList<locationInfor>();
+        location= new locationInfor();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_OK);
-        getData = request.getParameter("data");
+        getData = request.getParameter("getdata");
 
         if (getData==null){
             lat = request.getParameter("lat");
             lon = request.getParameter("lon");
             if (!(lat == null) && !(lon == null)) {
+                location.setLat(Float.parseFloat(lat));
+                location.setLon(Float.parseFloat(lon));
                 //infor.add(sensorNameStr, sensorValueStr);
 
             }else{
@@ -44,15 +47,12 @@ public class locationDB extends HttpServlet {
             }
 
         }else {
-
-            /*response.setContentType("application/json");
-            String json = "{\"location\": {\"" + lat +
-                    "\": \"" + lon + "\"}}";*/
+            response.setContentType("application/json");
+            String json = gson.toJson(location);
             PrintWriter out = response.getWriter();
-            out.print(lat + " " +lon);
+            out.print(json);
             out.close();
-            System.out.println(lat + "  "  + lon);
-
+            System.out.println(json);
         }
 
     }
