@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class locationInfor {
 
-    Float lon, lat;
+    Float  lat,lng;
     String deviceID;
     Date Timestape;
 
@@ -15,19 +15,10 @@ public class locationInfor {
         super();
     }
 
-    public locationInfor(Float lon, Float lat, String deviceID) {
-        this.lon = lon;
+    public locationInfor(Float lng, Float lat, String deviceID) {
+        this.lng = lng;
         this.lat = lat;
         this.deviceID = deviceID;
-    }
-
-    public Float getLon() {
-        return lon;
-    }
-
-    public locationInfor setLon(float lon) {
-        this.lon = lon;
-        return this;
     }
 
     public Float getLat() {
@@ -38,7 +29,14 @@ public class locationInfor {
         this.lat = lat;
         return this;
     }
+    public Float getLng() {
+        return lng;
+    }
 
+    public locationInfor setLng(float lng) {
+        this.lng = lng;
+        return this;
+    }
     public String getDeviceID() {
         return deviceID;
     }
@@ -59,11 +57,11 @@ public class locationInfor {
 
     @Override
     public String toString() {
-        return "locationInfor{" +
-                "lon=" + lon +
+        return "[locationInfor{" +
                 ", lat=" + lat +
+                "lng=" + lng +
                 ", deviceID='" + deviceID + '\'' +
                 ", Timestape=" + Timestape +
-                '}';
+                "}]";
     }
 }

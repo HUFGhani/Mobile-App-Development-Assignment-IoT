@@ -22,7 +22,7 @@ public class locationDB extends HttpServlet {
     locationInforDAO infor;
     locationInfor location;
     String getData;
-    String lat, lon;
+    String lat, lng;
      Gson gson = new Gson();
 
     public void init() throws ServletException {
@@ -36,10 +36,10 @@ public class locationDB extends HttpServlet {
 
         if (getData==null){
             lat = request.getParameter("lat");
-            lon = request.getParameter("lon");
-            if (!(lat == null) && !(lon == null)) {
+            lng = request.getParameter("lng");
+            if (!(lat == null) && !(lng == null)) {
                 location.setLat(Float.parseFloat(lat));
-                location.setLon(Float.parseFloat(lon));
+                location.setLng(Float.parseFloat(lng));
                 //infor.add(sensorNameStr, sensorValueStr);
 
             }else{
@@ -50,7 +50,7 @@ public class locationDB extends HttpServlet {
             response.setContentType("application/json");
             String json = gson.toJson(location);
             PrintWriter out = response.getWriter();
-            out.print(json);
+            out.print("["+json+"]");
             out.close();
             System.out.println(json);
         }
