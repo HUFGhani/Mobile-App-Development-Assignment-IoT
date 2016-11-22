@@ -1,112 +1,112 @@
 <!DOCTYPE html >
-   <head>
-     <title>IoT status</title>
+<head>
+    <title>IoT status</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfKlzx7XeiAwWrQ3Rf00PhU_QFemlmRlk"></script>
     <script src="https://cdn.rawgit.com/googlemaps/v3-utility-library/infobox/1.1.13/src/infobox.js"></script>
     <link href="css/style.css" rel="stylesheet">
 
 </head>
-   <body>
-   <div id="locations-map"></div>
-   <script>
-        var latt,lon;
-        getLocation();
+<body>
+<div id="locations-map"></div>
+<script>
+    var latt, lon;
+    getLocation();
 
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition);
-            } else {
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
 
-            }
         }
-        function showPosition(position) {
-            latt = position.coords.latitude;
-            lon = position.coords.longitude;
+    }
+    function showPosition(position) {
+        latt = position.coords.latitude;
+        lon = position.coords.longitude;
+    }
+    function renderGoogleMap() {
+        var start_point = new google.maps.LatLng(latt, lon);
+
+        // Creating a new map
+        var map = new google.maps.Map(document.getElementById("locations-map"), {
+            center: start_point,
+            zoom: 6,
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        });
+
+
+        // Creating a global infoWindow object that will be reused by all markers
+        var infoWindow = new google.maps.InfoWindow();
+
+
+        function setMarkerPoints(map, marker) {
+            var bounds = new google.maps.LatLngBounds();
+
+
+            $.ajax({
+                type: "GET",
+                url: 'http://localhost:8080/IoT_Server/locationDB?getdata',
+                dataType: "json",
+                success: function (data) {
+
+                    if (data.length !== 0) {
+
+
+                        $.each(data, function (marker, data) {
+
+
+                            var latLng = new google.maps.LatLng(data.lat, data.lng);
+                            bounds.extend(latLng);
+
+                            // Creating a marker and putting it on the map
+                            var marker = new google.maps.Marker({
+                                position: latLng,
+                                map: map,
+                                title: data.title
+                            });
+
+                            var windowContent = '<h3>' + data.Timestape + '</h3>' +
+                                    'latitude: ' + data.lat +
+                                    ' longitude: ' + data.lng;
+
+                            // Attaching a click event to the current marker
+                            infobox = new InfoBox({
+                                content: infoWindow.setContent(windowContent),
+                                alignBottom: true,
+                                pixelOffset: new google.maps.Size(-160, -45)
+                            });
+
+                            google.maps.event.addListener(marker, 'click', function () {
+
+                                // Open this map's infobox
+                                infobox.open(map, marker);
+                                infobox.setContent(windowContent);
+                                map.panTo(marker.getPosition());
+                                infobox.show();
+                            });
+
+                            google.maps.event.addListener(map, 'click', function () {
+                                infobox.setMap(null);
+                            });
+                        });
+                    }
+                },
+                error: function (data) {
+                    console.log('Please refresh the page and try again');
+                }
+            });
+            //END MARKER DATA
+
+            // end loop through json
+
+            map.setCenter(start_point);
+            map.fitBounds(bounds);
         }
-       function renderGoogleMap() {
-           var start_point = new google.maps.LatLng(latt, lon);
 
-           // Creating a new map
-           var map = new google.maps.Map(document.getElementById("locations-map"), {
-               center: start_point,
-               zoom: 6,
-               mapTypeId: google.maps.MapTypeId.SATELLITE
-           });
+        setMarkerPoints(map);
+    }
 
-
-
-           // Creating a global infoWindow object that will be reused by all markers
-           var infoWindow = new google.maps.InfoWindow();
-
-
-
-           function setMarkerPoints(map, marker) {
-               var bounds = new google.maps.LatLngBounds();
-
-
-               $.ajax({
-                   type: "GET",
-                   url: 'http://localhost:8080/IoT_Server/locationDB?getdata',
-                   dataType: "json",
-                   success: function (data) {
-
-                       if (data.length !== 0) {
-
-
-                           $.each(data, function (marker, data) {
-
-
-                               var latLng = new google.maps.LatLng(data.lat, data.lng);
-                               bounds.extend(latLng);
-
-                               // Creating a marker and putting it on the map
-                               var marker = new google.maps.Marker({
-                                   position: latLng,
-                                   map: map,
-                                   title: data.title
-                               });
-
-                               var windowContent = '<h3>' + data.Timestape+ '</h3>'+
-                                       'latitude: ' + data.lat +
-                                       ' longitude: '+ data.lng;
-
-                               // Attaching a click event to the current marker
-                               infobox = new InfoBox({
-                                   content: infoWindow.setContent(windowContent),
-                                   alignBottom: true,
-                                   pixelOffset: new google.maps.Size(-160, -45)
-                               });
-
-                               google.maps.event.addListener(marker, 'click', function () {
-
-                                   // Open this map's infobox
-                                   infobox.open(map, marker);
-                                   infobox.setContent(windowContent);
-                                   map.panTo(marker.getPosition());
-                                   infobox.show();
-                               });
-
-                               google.maps.event.addListener(map, 'click', function () {
-                                   infobox.setMap(null);
-                               });
-                           });
-                       }
-                   },
-                   error: function (data) {
-                       console.log('Please refresh the page and try again');
-                   }
-               });
-               //END MARKER DATA
-
-               // end loop through json
-
-               map.setCenter(start_point);
-               map.fitBounds(bounds);
-           }
-           setMarkerPoints(map);
-       }
-
-        renderGoogleMap();
-   </script>
-   </body>
+    renderGoogleMap();
+</script>
+</body>
+</html>

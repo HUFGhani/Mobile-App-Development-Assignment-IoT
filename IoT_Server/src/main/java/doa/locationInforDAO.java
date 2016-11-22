@@ -35,7 +35,7 @@ public class locationInforDAO {
             locationInfor infor = new locationInfor();
             ptmt.setString(1,infor.getDeviceID());
             ptmt.setFloat(2, infor.getLat());
-            ptmt.setFloat(3, infor.getLon());
+            ptmt.setFloat(3, infor.getLng());
             ptmt.executeUpdate();
             log.info("Data Added Successfully!!!");
 
@@ -58,7 +58,7 @@ public class locationInforDAO {
                 locationInfor infor = new locationInfor();
                 infor.setDeviceID(output.getString(""));
                 infor.setLat(output.getFloat("s"));
-                infor.setLon(output.getFloat("s"));
+                infor.setLng(output.getFloat("s"));
                 infor.setTimeInserted(output.getTime("s"));
                 location.add(infor);
             }
