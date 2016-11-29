@@ -13,9 +13,9 @@ public class connectionFactory {
     private static final Logger log = Logger.getLogger(connectionFactory.class);
     String driverClassName = "com.mysql.jdbc.Driver";
     String dbUser = "root";
-    String dbPwd = "ghani";
-    String dBase = "";
-    String dbLocal = "";
+    String dbPwd = "*****";
+    String dBase = "IoT";
+    String dbLocal = "sandbox.dev";
     String connectionUrl = "jdbc:mysql://"+dbLocal+"/" + dBase;
 
     private static connectionFactory connectionFactory = null;
