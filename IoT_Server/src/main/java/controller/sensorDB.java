@@ -52,19 +52,16 @@ public class sensorDB extends HttpServlet {
                 sensor.setSensorName(sensorNameStr);
                 sensor.setSensorValue(sensorValueboolean);
                 sensor.setTimeStamp(date);
-
                 infor.add(sensor);
-
 
             }else{
                 log.error("bad data has been sent");
+                
             }
-
         }else {
             email = request.getParameter("email");
             if (!(email==null)) {
                 ArrayList <sensorInfor> sensors = infor.getdata(email);
-
                 response.setContentType("application/json");
                 String json = gson.toJson(sensors);
                 PrintWriter out = response.getWriter();
