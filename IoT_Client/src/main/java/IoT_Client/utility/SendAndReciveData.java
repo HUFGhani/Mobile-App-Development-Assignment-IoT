@@ -19,17 +19,15 @@ public class SendAndReciveData {
     public String sendingData(boolean info) {
         fullURL = mainURL + "?sensorname=DoorRFID&sensorvalue=" + info +"&email=hamza_05@hotmail.co.uk";
         System.out.println("Sending data to: " + fullURL);
-        String result = "";
-        connection("POST", fullURL);
+        String result = connection("POST", fullURL);
 
     return result;
     }
 
     public String reciveData(){
         fullURL= mainURL + "?getdata&email=hamza_05@hotmail.co.uk";
-        System.out.println("Sending data to: "+fullURL);
-        String result = "";
-        connection("GET",fullURL);
+        System.out.println("receiving data to: "+fullURL);
+        String result = connection("GET",fullURL);
         return result;
     }
 
@@ -39,7 +37,7 @@ public class SendAndReciveData {
         try {
             url = new URL(fullURL);
             conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(httpResquest);
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             while ((line = rd.readLine()) != null) {
                 temp += line;
@@ -48,7 +46,6 @@ public class SendAndReciveData {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return temp;
     }
 

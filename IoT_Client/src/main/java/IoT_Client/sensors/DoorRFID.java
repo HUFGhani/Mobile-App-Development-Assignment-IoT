@@ -2,6 +2,7 @@ package IoT_Client.sensors;
 
 import IoT_Client.utility.SendAndReciveData;
 import IoT_Client.utility.SensorsInfor;
+import com.google.gson.Gson;
 import com.phidgets.PhidgetException;
 import com.phidgets.RFIDPhidget;
 import com.phidgets.event.TagGainEvent;
@@ -19,12 +20,13 @@ public class DoorRFID implements TagLossListener, TagGainListener {
     private RFIDPhidget rfid;
     private SensorsInfor infor;
     private DoorMotorServo moto;
-    private SendAndReciveData sendRecive;
+    private SendAndReciveData sendRecive = new SendAndReciveData();
+    Gson gson = new Gson();
+    SensorsInforR T = new SensorsInforR();
 
     public DoorRFID()  {
         infor = new SensorsInfor();
         moto= new DoorMotorServo();
-        infor.setIsDooropen(false);
         try {
 
             rfid = new RFIDPhidget();
@@ -38,10 +40,10 @@ public class DoorRFID implements TagLossListener, TagGainListener {
 
             while (true)
                 try {
-                    Thread.sleep(5000);
-                    getDataFromServer();
+                    dataReceived();
+                    Thread.sleep(2500);
                 } catch (Throwable t) {
-                    log.error(t);
+                    t.printStackTrace();
                 }
         }catch (PhidgetException e){
             log.error(e);
@@ -50,22 +52,27 @@ public class DoorRFID implements TagLossListener, TagGainListener {
 
     @Override
     public void tagGained( TagGainEvent tagGainEvent ) {
+
         infor.setRfidValue( tagGainEvent.getValue( ) );
-        if (infor.getRfidValue().equals("hi")){
+        if (infor.getRfidValue().equals("hi") ){
             log.info(infor.getRfidValue());
 
             try {
+                infor.setIsDooropen(true);
+                sendRecive.sendingData(infor.getIsDooropen());
                 rfid.setLEDOn(false);
                 moto.openlock();
-                infor.setIsDooropen(true);
-                Data2Server();
-                if (rfid.getLEDOn() == false) {
+                Thread.sleep(250);
+                if (rfid.getLEDOn() == false && infor.getIsDooropen()==true) {
+                    infor.setIsDooropen(false);
+                    sendRecive.sendingData(infor.getIsDooropen());
                     rfid.setLEDOn(true);
                     moto.closelock();
-                    infor.setIsDooropen(false);
-                    Data2Server();
+
                 }
             } catch (PhidgetException e) {
+                log.error(e);
+            } catch (InterruptedException e) {
                 log.error(e);
             }
         }
@@ -77,14 +84,15 @@ public class DoorRFID implements TagLossListener, TagGainListener {
 
     }
 
-    public String Data2Server() {
 
-        return sendRecive.sendingData(infor.getIsDooropen());
+    private void dataReceived(){
+
+        String json = sendRecive.reciveData();
+
+        System.out.println(json);
+
     }
 
-    public String getDataFromServer() {
 
 
-        return sendRecive.reciveData();
-    }
 }
