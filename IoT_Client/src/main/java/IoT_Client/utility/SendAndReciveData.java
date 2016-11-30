@@ -17,7 +17,7 @@ public class SendAndReciveData {
 
 
     public String sendingData(boolean info) {
-        fullURL = mainURL + "?sensorname=DoorRFID&sensorvalue=" + info;
+        fullURL = mainURL + "?sensorname=DoorRFID&sensorvalue=" + info +"&email=hamza_05@hotmail.co.uk";
         System.out.println("Sending data to: " + fullURL);
         String result = "";
         connection("POST", fullURL);
@@ -26,7 +26,7 @@ public class SendAndReciveData {
     }
 
     public String reciveData(){
-        fullURL= mainURL + "?getdata";
+        fullURL= mainURL + "?getdata&email=hamza_05@hotmail.co.uk";
         System.out.println("Sending data to: "+fullURL);
         String result = "";
         connection("GET",fullURL);

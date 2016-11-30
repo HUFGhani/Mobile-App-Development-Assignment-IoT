@@ -52,7 +52,7 @@ public class sensorInforDAO {
     public ArrayList<sensorInfor> getdata(String eamil){
         ArrayList<sensorInfor> sensor = null;
         try {
-            String query="Select * from Sensers WHERE Email='"+eamil+"';";
+            String query="Select * from Sensers WHERE Email='"+eamil+"'ORDER BY TimeStamp DESC LIMIT 1;";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
             output = ptmt.executeQuery();

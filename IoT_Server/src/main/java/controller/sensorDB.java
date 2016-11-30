@@ -56,7 +56,7 @@ public class sensorDB extends HttpServlet {
 
             }else{
                 log.error("bad data has been sent");
-                
+
             }
         }else {
             email = request.getParameter("email");

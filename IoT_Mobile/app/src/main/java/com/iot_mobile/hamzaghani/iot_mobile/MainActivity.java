@@ -2,12 +2,14 @@ package com.iot_mobile.hamzaghani.iot_mobile;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -16,9 +18,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.iot_mobile.hamzaghani.iot_mobile.model.sensorInfor;
 
 public class MainActivity extends Activity implements LocationListener {
 
+    Gson gson = new Gson();
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
     private static final int REQUEST_LOCATION = 2;
@@ -28,10 +33,13 @@ public class MainActivity extends Activity implements LocationListener {
 
     private double fusedLatitude = 0.0;
     private  double fusedLongitude = 0.0;
-
+    sensorInfor sensor = new sensorInfor();
 
     String url;
-    private static final String baseURL="http://10.182.17.145:8080/IoT_Server/";
+    private static final String baseURL="http://10.0.90.140:8080/IoT_Server/";
+    private Dialog pDialog;
+
+    TextView test;
 
 
     @Override
@@ -39,6 +47,8 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        test =(TextView) findViewById(R.id.test);
 
         if (checkPlayServices()) {
             startFusedLocation();
@@ -208,15 +218,26 @@ public class MainActivity extends Activity implements LocationListener {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            url =baseURL + "sensorDB?getdata";
+            url =baseURL + "?sensorname=DoorRFID&sensorvalue=true&email=hamza_05@hotmail.co.uk";
 
             ServiceHandler sh = new ServiceHandler();
 
-            sh.makeServiceCall(url,ServiceHandler.GET);
+            String jsonString = sh.makeServiceCall(url,ServiceHandler.GET);
 
-            
-
+             sensor = gson.fromJson(jsonString, sensorInfor.class);
+            System.out.println(sensor);
             return null;
         }
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+
+
+            test.setText(sensor.getEmail());
+        }
+
     }
 }
