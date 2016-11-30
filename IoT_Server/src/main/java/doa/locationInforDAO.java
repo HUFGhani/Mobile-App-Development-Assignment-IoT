@@ -4,10 +4,7 @@ import config.connectionFactory;
 import model.locationInfor;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 /**
@@ -19,6 +16,7 @@ public class locationInforDAO {
     Connection conn;
     PreparedStatement ptmt;
     ResultSet output;
+    //Statement statement;
 
     private Connection getConnection() throws SQLException{
         Connection connection;
@@ -26,16 +24,16 @@ public class locationInforDAO {
         return connection;
     }
 
-    public void add (String lan, String lat){
+    public void add (locationInfor location){
         try {
-            String query="insert into sensorUsage(SensorName, SensorValue, TimeInserted) "+
-                    "values('"+lan+"','"+lat+"', now());";
+            String query="insert into Locations(Latitude, Longitude,Email, TimeStamp ) "+
+                    "values(?,?,?,?);";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
-            locationInfor infor = new locationInfor();
-            ptmt.setString(1,infor.getDeviceID());
-            ptmt.setFloat(2, infor.getLat());
-            ptmt.setFloat(3, infor.getLng());
+            ptmt.setBigDecimal(1, location.getLat());
+            ptmt.setBigDecimal(2, location.getLng());
+            ptmt.setString(3, location.getEmail());
+            ptmt.setTimestamp(4, (Timestamp) location.getTimestape());
             ptmt.executeUpdate();
             log.info("Data Added Successfully!!!");
 
@@ -46,20 +44,20 @@ public class locationInforDAO {
         }
     }
 
-    public ArrayList<locationInfor> getdata(){
+    public ArrayList<locationInfor> getdata(String email){
         ArrayList<locationInfor> location = null;
         try {
-            String query="Select * from location";
+            String query="Select * from Locations WHERE Email ='"+email+"';";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
             output = ptmt.executeQuery();
             location=new ArrayList<locationInfor>();
             while (output.next()){
                 locationInfor infor = new locationInfor();
-                infor.setDeviceID(output.getString(""));
-                infor.setLat(output.getFloat("s"));
-                infor.setLng(output.getFloat("s"));
-                infor.setTimeInserted(output.getTime("s"));
+
+                infor.setLat(output.getBigDecimal("Latitude"));
+                infor.setLng(output.getBigDecimal("Longitude"));
+                infor.setTimestape(output.getTimestamp("TimeStamp"));
                 location.add(infor);
             }
         } catch (SQLException e) {
@@ -84,4 +82,7 @@ public class locationInforDAO {
             log.error(e);
         }
     }
+
+
+
 }

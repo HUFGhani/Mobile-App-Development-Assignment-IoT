@@ -29,15 +29,16 @@ public class sensorInforDAO {
         return connection;
     }
 
-    public void add (String sensorName, String sensorValue){
+    public void add (sensorInfor sensor){
         try {
-            String query="insert into sensorUsage(SensorName, SensorValue, TimeInserted) "+
-                    "values('"+sensorName+"','"+sensorValue+"', now());";
+            String query="insert into Sensers(SensorName, SensorValue,Email, TimeStamp ) "+
+                    "values(?,?,?,?);";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
-            sensorInfor infor = new sensorInfor();
-            ptmt.setString(1,infor.getSensorName());
-            ptmt.setString(2,infor.getSensorValue());
+            ptmt.setString(1,sensor.getSensorName());
+            ptmt.setBoolean(2,sensor.getSensorValue());
+            ptmt.setString(3,sensor.getEmail());
+            ptmt.setTimestamp(4,sensor.getTimeStamp());
             ptmt.executeUpdate();
             log.info("Data Added Successfully!!!");
 
@@ -48,21 +49,21 @@ public class sensorInforDAO {
         }
     }
 
-    public ArrayList<sensorInfor> getdata(){
+    public ArrayList<sensorInfor> getdata(String eamil){
         ArrayList<sensorInfor> sensor = null;
         try {
-            String query="Select * from sensor";
+            String query="Select * from Sensers WHERE Email='"+eamil+"';";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
             output = ptmt.executeQuery();
             sensor=new ArrayList<sensorInfor>();
             while (output.next()){
                 sensorInfor infor = new sensorInfor();
-                infor.setSensorID(output.getString(""));
-                infor.setSensorName(output.getString(""));
-                infor.setSensorValue(output.getString(""));
-                infor.setTimeInserted(output.getTime(""));
+                infor.setSensorName(output.getString("SensorName"));
+                infor.setSensorValue(output.getBoolean("SensorValue"));
+                infor.setTimeStamp(output.getTimestamp("TimeStamp"));
                 sensor.add(infor);
+
             }
         } catch (SQLException e) {
             log.error(e);

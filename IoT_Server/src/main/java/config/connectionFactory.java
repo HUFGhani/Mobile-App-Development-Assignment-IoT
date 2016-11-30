@@ -11,11 +11,12 @@ import java.sql.SQLException;
  */
 public class connectionFactory {
     private static final Logger log = Logger.getLogger(connectionFactory.class);
-    String driverClassName = "com.mysql.jdbc.Driver";
+    //String driverClassName = "com.mysql.jdbc.Driver";
+    String driverClassName = "com.mysql.cj.jdbc.Driver";
     String dbUser = "root";
-    String dbPwd = "*****";
+    String dbPwd = "Pa55word!";
     String dBase = "IoT";
-    String dbLocal = "sandbox.dev";
+    String dbLocal = "localhost";
     String connectionUrl = "jdbc:mysql://"+dbLocal+"/" + dBase;
 
     private static connectionFactory connectionFactory = null;

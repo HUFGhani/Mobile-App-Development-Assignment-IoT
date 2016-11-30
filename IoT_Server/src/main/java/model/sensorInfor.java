@@ -1,24 +1,26 @@
 package model;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
  * Created by hamzaghani on 24/10/2016.
  */
-public class sensorInfor {
-    String sensorID, sensorName, sensorValue;
-    Date timeInserted;
+public class sensorInfor implements Serializable {
+    private String sensorID, sensorName,email;
+    private Boolean sensorValue;
+    private Timestamp TimeStamp;
 
     public sensorInfor() {
         super();
     }
 
-    public sensorInfor(String sensorID, String sensorName, String sensorValue, Date timeInserted) {
-        super();
-        this.sensorID =sensorID;
+    public sensorInfor(String sensorID, String sensorName, String email, Boolean sensorValue, Timestamp timeStamp) {
+        this.sensorID = sensorID;
         this.sensorName = sensorName;
+        this.email = email;
         this.sensorValue = sensorValue;
-        this.timeInserted = timeInserted;
+        TimeStamp = timeStamp;
     }
 
     public String getSensorID() {
@@ -39,21 +41,30 @@ public class sensorInfor {
         return this;
     }
 
-    public String getSensorValue() {
+    public String getEmail() {
+        return email;
+    }
+
+    public sensorInfor setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public Boolean getSensorValue() {
         return sensorValue;
     }
 
-    public sensorInfor setSensorValue(String sensorValue) {
+    public sensorInfor setSensorValue(Boolean sensorValue) {
         this.sensorValue = sensorValue;
         return this;
     }
 
-    public Date getTimeInserted() {
-        return timeInserted;
+    public Timestamp getTimeStamp() {
+        return TimeStamp;
     }
 
-    public sensorInfor setTimeInserted(Date timeInserted) {
-        this.timeInserted = timeInserted;
+    public sensorInfor setTimeStamp(Timestamp timeStamp) {
+        TimeStamp = timeStamp;
         return this;
     }
 
@@ -62,8 +73,9 @@ public class sensorInfor {
         return "sensorInfor{" +
                 "sensorID='" + sensorID + '\'' +
                 ", sensorName='" + sensorName + '\'' +
-                ", sensorValue='" + sensorValue + '\'' +
-                ", timeInserted=" + timeInserted +
+                ", email='" + email + '\'' +
+                ", sensorValue=" + sensorValue +
+                ", TimeStamp=" + TimeStamp +
                 '}';
     }
 }

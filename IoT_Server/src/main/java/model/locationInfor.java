@@ -1,67 +1,73 @@
 package model;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
  * Created by hamzaghani on 26/10/2016.
  */
-public class locationInfor {
+public class locationInfor implements Serializable{
 
-    Float  lat,lng;
-    String deviceID;
-    Date Timestape;
+    private BigDecimal lat,lng;
+    private Timestamp timestape;
+    private String email;
 
     public locationInfor() {
         super();
     }
 
-    public locationInfor(Float lng, Float lat, String deviceID) {
-        this.lng = lng;
+    public locationInfor(BigDecimal lat, BigDecimal lng, Timestamp timestape, String email) {
         this.lat = lat;
-        this.deviceID = deviceID;
+        this.lng = lng;
+        this.timestape = timestape;
+        this.email = email;
     }
 
-    public Float getLat() {
+    public BigDecimal getLat() {
         return lat;
     }
 
-    public locationInfor setLat(float lat) {
+    public locationInfor setLat(BigDecimal lat) {
         this.lat = lat;
         return this;
     }
-    public Float getLng() {
+
+    public BigDecimal getLng() {
         return lng;
     }
 
-    public locationInfor setLng(float lng) {
+    public locationInfor setLng(BigDecimal lng) {
         this.lng = lng;
         return this;
     }
-    public String getDeviceID() {
-        return deviceID;
+
+    public Date getTimestape() {
+        return timestape;
     }
 
-    public locationInfor setDeviceID(String deviceID) {
-        this.deviceID = deviceID;
+    public locationInfor setTimestape(Timestamp timestape) {
+        this.timestape = timestape;
         return this;
     }
 
-    public Date getTimeInserted() {
-        return Timestape;
+    public String getEmail() {
+        return email;
     }
 
-    public locationInfor setTimeInserted(Date timestape) {
-        Timestape = timestape;
+    public locationInfor setEmail(String email) {
+        this.email = email;
         return this;
     }
 
     @Override
     public String toString() {
-        return "[locationInfor{" +
-                ", lat=" + lat +
-                "lng=" + lng +
-                ", deviceID='" + deviceID + '\'' +
-                ", Timestape=" + Timestape +
-                "}]";
+        return "locationInfor{" +
+                "lat=" + lat +
+                ", lng=" + lng +
+                ", timestape=" + timestape +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

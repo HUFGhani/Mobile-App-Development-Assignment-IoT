@@ -23,12 +23,16 @@ public class sensorDB extends HttpServlet {
     private static final Logger log = Logger.getLogger(sensorDB.class);
 
     sensorInforDAO infor;
-    ArrayList<sensorInfor> sensor;
+    sensorInfor sensor;
     String getData;
     Gson gson = new Gson();
+    private String sensorNameStr;
+    private String sensorValueStr;
+    private String email;
+
     public void init() throws ServletException {
         infor= new sensorInforDAO();
-        sensor= new ArrayList<sensorInfor>();
+        sensor= new sensorInfor();
     }
 
 
@@ -37,24 +41,37 @@ public class sensorDB extends HttpServlet {
         getData = request.getParameter("getdata");
 
         if (getData==null){
-            String sensorNameStr = request.getParameter("sensorname");
-            String sensorValueStr = request.getParameter("sensorvalue");
-            if (!(sensorNameStr == null) && !(sensorValueStr == null)) {
-                //infor.add(sensorNameStr, sensorValueStr);
-                System.out.println(sensorNameStr + "  "  + sensorValueStr);
+            sensorNameStr = request.getParameter("sensorname");
+            sensorValueStr = request.getParameter("sensorvalue");
+            email = request.getParameter("email");
+
+            if (!(sensorNameStr == null) && !(sensorValueStr == null) && !(email==null)) {
+                java.sql.Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
+                boolean sensorValueboolean = Boolean.parseBoolean(sensorValueStr);
+                sensor.setEmail(email);
+                sensor.setSensorName(sensorNameStr);
+                sensor.setSensorValue(sensorValueboolean);
+                sensor.setTimeStamp(date);
+
+                infor.add(sensor);
+
+
             }else{
                 log.error("bad data has been sent");
             }
 
         }else {
-            response.setContentType("application/json");
+            email = request.getParameter("email");
+            if (!(email==null)) {
+                ArrayList <sensorInfor> sensors = infor.getdata(email);
 
-            String json = gson.toJson(sensor);
-            PrintWriter out = response.getWriter();
-            out.print(json);
-            out.close();
-            System.out.println(json);
-
+                response.setContentType("application/json");
+                String json = gson.toJson(sensors);
+                PrintWriter out = response.getWriter();
+                out.print(json);
+                out.close();
+                System.out.println(json);
+            }
         }
 
     }
