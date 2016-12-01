@@ -1,5 +1,10 @@
 package IoT_Client.utility;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -14,6 +19,8 @@ public class SendAndReciveData {
     HttpURLConnection conn;
     BufferedReader rd;
     String fullURL ;
+    boolean getTrue;
+
 
 
     public String sendingData(boolean info) {
@@ -28,25 +35,49 @@ public class SendAndReciveData {
         fullURL= mainURL + "?getdata&email=hamza_05@hotmail.co.uk";
         System.out.println("receiving data to: "+fullURL);
         String result = connection("GET",fullURL);
+
         return result;
     }
 
-    private String connection (String httpResquest ,String fullURL){
+    private String connection (String httpResquest , String fullURL){
         String temp="";
         String line;
+
         try {
             url = new URL(fullURL);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(httpResquest);
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             while ((line = rd.readLine()) != null) {
+
                 temp += line;
             }
             rd.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return temp;
+
+        if (temp.length()>0) {
+            try {
+                JSONArray json = new JSONArray(temp);
+                for (int i = 0; i < json.length(); i++) {
+                    JSONObject c = json.getJSONObject(i);
+
+                    getTrue = c.getBoolean("sensorValue");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return String.valueOf(getTrue);
+        }
+
+        return null;
+
+
+
     }
+
 
 }

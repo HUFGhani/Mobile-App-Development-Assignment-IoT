@@ -1,8 +1,7 @@
 package IoT_Client.sensors;
 
 import IoT_Client.utility.SendAndReciveData;
-import IoT_Client.utility.SensorsInfor;
-import com.google.gson.Gson;
+import IoT_Client.utility.sensorInfor;
 import com.phidgets.PhidgetException;
 import com.phidgets.RFIDPhidget;
 import com.phidgets.event.TagGainEvent;
@@ -18,15 +17,13 @@ public class DoorRFID implements TagLossListener, TagGainListener {
 
     private static final Logger log = Logger.getLogger(DoorRFID.class);
     private RFIDPhidget rfid;
-    private SensorsInfor infor;
+    private sensorInfor infor;
     private DoorMotorServo moto;
     private SendAndReciveData sendRecive = new SendAndReciveData();
-    Gson gson = new Gson();
-    SensorsInforR T = new SensorsInforR();
 
-    public DoorRFID()  {
-        infor = new SensorsInfor();
-        moto= new DoorMotorServo();
+    public DoorRFID() {
+        infor = new sensorInfor();
+        moto = new DoorMotorServo();
         try {
 
             rfid = new RFIDPhidget();
@@ -37,35 +34,35 @@ public class DoorRFID implements TagLossListener, TagGainListener {
             rfid.waitForAttachment();
             rfid.setAntennaOn(true);
             rfid.setLEDOn(true);
+            infor.setSensorValue(false);
 
             while (true)
                 try {
                     dataReceived();
-                    Thread.sleep(2500);
+                    Thread.sleep(5000);
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
-        }catch (PhidgetException e){
+        } catch (PhidgetException e) {
             log.error(e);
         }
+
     }
 
     @Override
-    public void tagGained( TagGainEvent tagGainEvent ) {
+    public void tagGained(TagGainEvent tagGainEvent) {
 
-        infor.setRfidValue( tagGainEvent.getValue( ) );
-        if (infor.getRfidValue().equals("hi") ){
-            log.info(infor.getRfidValue());
+        if (tagGainEvent.getValue().equals("hi")) {
 
             try {
-                infor.setIsDooropen(true);
-                sendRecive.sendingData(infor.getIsDooropen());
+                infor.setSensorValue(true);
+                sendRecive.sendingData(infor.getSensorValue());
                 rfid.setLEDOn(false);
                 moto.openlock();
                 Thread.sleep(250);
-                if (rfid.getLEDOn() == false && infor.getIsDooropen()==true) {
-                    infor.setIsDooropen(false);
-                    sendRecive.sendingData(infor.getIsDooropen());
+                if (rfid.getLEDOn() == false && infor.getSensorValue() == true) {
+                    infor.setSensorValue(false);
+                    sendRecive.sendingData(infor.getSensorValue());
                     rfid.setLEDOn(true);
                     moto.closelock();
 
@@ -76,23 +73,40 @@ public class DoorRFID implements TagLossListener, TagGainListener {
                 log.error(e);
             }
         }
-        infor.setIsDooropen(false);
+        infor.setSensorValue(false);
+
     }
 
     @Override
     public void tagLost(TagLossEvent tagLossEvent) {
 
-    }
-
-
-    private void dataReceived(){
-
-        String json = sendRecive.reciveData();
-
-        System.out.println(json);
 
     }
 
 
+    private void dataReceived() {
+        boolean t = infor.getSensorValue();
 
+
+        if ( sendRecive.reciveData().equals("true") && t==false ){
+            System.out.println("hamzaghani");
+            try {
+                infor.setSensorValue(true);
+                rfid.setLEDOn(false);
+                moto.openlock();
+                Thread.sleep(250);
+                if (infor.getSensorValue() == true) {
+                    infor.setSensorValue(false);
+                    sendRecive.sendingData(infor.getSensorValue());
+                    rfid.setLEDOn(true);
+                    moto.closelock();
+                }
+            } catch (PhidgetException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package IoT_Client.sensors;
 
-import IoT_Client.utility.SensorsInfor;
+import IoT_Client.utility.sensorInfor;
 import com.phidgets.AdvancedServoPhidget;
 import com.phidgets.PhidgetException;
 import com.phidgets.event.*;
@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 public class DoorMotorServo {
     private static final Logger log = Logger.getLogger(DoorMotorServo.class);
     private AdvancedServoPhidget moto;
-    private SensorsInfor infor;
+    private sensorInfor infor;
 
     public DoorMotorServo() {
         try {
