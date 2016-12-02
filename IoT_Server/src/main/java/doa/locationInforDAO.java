@@ -47,7 +47,7 @@ public class locationInforDAO {
     public ArrayList<locationInfor> getdata(String email){
         ArrayList<locationInfor> location = null;
         try {
-            String query="Select * from Locations WHERE Email ='"+email+"';";
+            String query="Select * from Locations;";
             conn=getConnection();
             ptmt=conn.prepareStatement(query);
             output = ptmt.executeQuery();

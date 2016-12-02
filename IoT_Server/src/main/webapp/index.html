@@ -27,8 +27,7 @@
     <![endif]-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMAsNr8rNi1ZYb5Sy_jYoQ-pIF4s0mwNM"></script>
-    <script src="https://cdn.rawgit.com/googlemaps/v3-utility-library/infobox/1.1.13/src/infobox.js"></script>
+
     <link href="css/style.css" rel="stylesheet">
 
     <script src="js/bootstrap.min.js"></script>
@@ -37,7 +36,7 @@
     <title>IoT status</title>
 </head>
 
-<body>
+<body onload="initMap()">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -52,106 +51,97 @@
             <a class="navbar-brand" href="#">Project name</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <form class="navbar-form navbar-right" method="post">
+            <form class="navbar-form navbar-right">
                 <div class="form-group">
-                    <input type="text" placeholder="Email" id="email" class="form-control">
+                    <input type="text" placeholder="Email" ID="textbox_1" class="form-control">
                 </div>
-                <button type="submit" onclick="" class="btn btn-success">Look up</button>
+                <button type="submit" onclick="getdata()" class="btn btn-success">Sign in</button>
             </form>
         </div><!--/.navbar-collapse -->
     </div>
 </nav>
+<div class="container_but">
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    See locaiton JSON
+</button>
 
-<div id="locations-map"></div>
+    <a href="sensor.html" class="btn btn-primary btn-lg" role="button">sensor</a>
 
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">location JSON</h4>
+            </div>
+            <div class="modal-body">
+                <pre id="pre">
+                </pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="map"></div>
 <script>
-    var latt, lon;
+    var map;
+    var json;
+    var eamil = document.getElementById("textbox_1").value
+    var url = "locationDB?getdata&email="
+    var full = url.concat(eamil);
 
-    renderGoogleMap();
-    function renderGoogleMap() {
-
-
-
-        // Creating a new map
-        var map = new google.maps.Map(document.getElementById("locations-map"), {
-            center: {lat: 53.433644, lng: -2.259055},
-            zoom: 5,
-            mapTypeId: google.maps.MapTypeId.SATELLITE
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 53.4808, lng: -2.2426},
+            zoom: 5
         });
+       $.getJSON(url, function(json1) {
+            json = json1
+            document.getElementById("pre").innerHTML= JSON.stringify(json, null, " ");
+            $.each(json1, function (key, data) {
+                var latLng = new google.maps.LatLng(data.lat, data.lng);
 
-        // Creating a global infoWindow object that will be reused by all markers
-        var infoWindow = new google.maps.InfoWindow();
+                var marker = new google.maps.Marker({
+                    position: latLng,
+                    map: map,
+                    // icon: icon,
+                    title: data.title
+                });
 
-        function setMarkerPoints(map, marker) {
-            var bounds = new google.maps.LatLngBounds();
-
-            var url = 'http://localhost:8080/IoT_Server/locationDB?getdata&email=hamza_05@hotmail.co.uk';
-
-            $.ajax({
-                type: "GET",
-                url: url,
-                dataType: "json",
-                success: function (data) {
-
-                    if (data.length !== 0) {
-
-
-                        $.each(data, function (marker, data) {
-
-
-                            var latLng = new google.maps.LatLng(data.lat, data.lng);
-                            bounds.extend(latLng);
-
-                            // Creating a marker and putting it on the map
-                            var marker = new google.maps.Marker({
-                                position: latLng,
-                                map: map,
-                                title: data.title
-                            });
-
-                            var windowContent = '<h3>' + data.timestape + '</h3>' +
-                                    'latitude: ' + data.lat +
-                                    ' longitude: ' + data.lng;
-
-                            // Attaching a click event to the current marker
-                            infobox = new InfoBox({
-                                content: infoWindow.setContent(windowContent),
-                                alignBottom: true,
-                                pixelOffset: new google.maps.Size(-160, -45)
-                            });
-
-                            google.maps.event.addListener(marker, 'click', function () {
-
-                                // Open this map's infobox
-                                infobox.open(map, marker);
-                                infobox.setContent(windowContent);
-                                map.panTo(marker.getPosition());
-                                infobox.show();
-                            });
-
-                            google.maps.event.addListener(map, 'click', function () {
-                                infobox.setMap(null);
-                            });
-                        });
-                    }
-                },
-                error: function (data) {
-                    console.log('Please refresh the page and try again');
-                }
             });
-            //END MARKER DATA
-
-            // end loop through json
-
-            map.setCenter(start_point);
-            map.fitBounds(bounds);
-        }
-
-        setMarkerPoints(map);
+        });
     }
 
 
+    function getdata() {
+        $.getJSON(full, function(json1) {
+            json = json1
+            document.getElementById("pre").innerHTML= JSON.stringify(json, null, " ");
+            $.each(json1, function (key, data) {
+                var latLng = new google.maps.LatLng(data.lat, data.lng);
+
+                var marker = new google.maps.Marker({
+                    position: latLng,
+                    map: map,
+                    // icon: icon,
+                    title: data.title
+                });
+
+            });
+        });
+    }
+
 </script>
 
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMAsNr8rNi1ZYb5Sy_jYoQ-pIF4s0mwNM"
+        async defer></script>
 </body>
 </html>

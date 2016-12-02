@@ -63,7 +63,6 @@ public class sensorInforDAO {
                 infor.setSensorValue(output.getBoolean("SensorValue"));
                 infor.setTimeStamp(output.getTimestamp("TimeStamp"));
                 sensor.add(infor);
-
             }
         } catch (SQLException e) {
             log.error(e);
