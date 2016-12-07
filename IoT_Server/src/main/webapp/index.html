@@ -36,7 +36,7 @@
     <title>IoT status</title>
 </head>
 
-<body onload="initMap()">
+<body onload="initMap(), test();">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -56,22 +56,21 @@
                     <input type="text" placeholder="Email" ID="textbox_1" class="form-control">
                 </div>
                 <button type="submit" onclick="getdata()" class="btn btn-success">Sign in</button>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#locations">
+                    See locaiton JSON
+                </button>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sensor">
+                    sensor
+                </button>
             </form>
+
         </div><!--/.navbar-collapse -->
     </div>
 </nav>
-<div class="container_but">
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-    See locaiton JSON
-</button>
-
-    <a href="sensor.html" class="btn btn-primary btn-lg" role="button">sensor</a>
-
-
-</div>
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="locations" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -79,8 +78,30 @@
                 <h4 class="modal-title" id="myModalLabel">location JSON</h4>
             </div>
             <div class="modal-body">
-                <pre id="pre">
+                <pre id="locationdata">
                 </pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="sensor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <pre id="sensordata">
+                </pre>
+                <p id="status">close lock</p>
+                <button type="button" id ="open" class="btn btn-success" >
+                    open
+                </button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -103,7 +124,7 @@
         });
        $.getJSON(url, function(json1) {
             json = json1
-            document.getElementById("pre").innerHTML= JSON.stringify(json, null, " ");
+            document.getElementById("locationdata").innerHTML= JSON.stringify(json, null, " ");
             $.each(json1, function (key, data) {
                 var latLng = new google.maps.LatLng(data.lat, data.lng);
 
@@ -119,10 +140,10 @@
     }
 
 
-    function getdata() {
+    function getlocationdata() {
         $.getJSON(full, function(json1) {
             json = json1
-            document.getElementById("pre").innerHTML= JSON.stringify(json, null, " ");
+            document.getElementById("locationdata").innerHTML= JSON.stringify(json, null, " ");
             $.each(json1, function (key, data) {
                 var latLng = new google.maps.LatLng(data.lat, data.lng);
 
@@ -136,6 +157,36 @@
             });
         });
     }
+
+
+    var Sjson;
+    var Surl = "sensorDB?getdata&email=hamza_05@hotmail.co.uk"
+
+    function test () {
+
+        $.getJSON(Surl, function(json1) {
+            Sjson = json1
+            document.getElementById("sensordata").innerHTML= JSON.stringify(Sjson, null, " ");
+            $.each(Sjson, function (key, data) {
+                setInterval(function(){
+                    if(Sjson.sensorValue===false) {
+                        document.getElementById("status").innerHTML = "close lock";
+                        document.getElementById("sensordata").innerHTML= JSON.stringify(Sjson, null, " ");
+                    }}, 15000);
+            })
+
+        });
+    }
+
+    $(document).ready(function() {
+        $("#open").click(function () {
+            $.post("sensorDB?sensorname=DoorRFID&sensorvalue=true&email=hamza_05@hotmail.co.uk", {},
+                function (data, status) {
+                    test();
+                    document.getElementById("status").innerHTML = "open lock";
+                });
+        });
+    })
 
 </script>
 
