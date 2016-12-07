@@ -36,7 +36,7 @@
     <title>IoT status</title>
 </head>
 
-<body onload="initMap(), test();">
+<body onload="initMap();">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -48,20 +48,22 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Project name</a>
+            <a class="navbar-brand" href="#">IoT Web Service</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <form class="navbar-form navbar-right">
                 <div class="form-group">
-                    <input type="text" placeholder="Email" ID="textbox_1" class="form-control">
+                    <input type="email" placeholder="Email" ID="textbox_1" class="form-control" autocomplete="off">
                 </div>
-                <button type="submit" onclick="getdata()" class="btn btn-success">Sign in</button>
+                <button type="button" onclick="geteamil()" id="signin" class="btn btn-success">Sign in</button>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#locations">
+                <button type="button" class="btn btn-success" data-toggle="modal" id="loc" data-target="#locations"
+                        disabled>
                     See locaiton JSON
                 </button>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sensor">
+                <button type="button" class="btn btn-success" data-toggle="modal" id="sen" data-target="#sensor"
+                        onclick="getsensordata()" disabled>
                     sensor
                 </button>
             </form>
@@ -74,7 +76,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">location JSON</h4>
             </div>
             <div class="modal-body">
@@ -92,14 +95,15 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
             <div class="modal-body">
                 <pre id="sensordata">
                 </pre>
-                <p id="status">close lock</p>
-                <button type="button" id ="open" class="btn btn-success" >
+                <p id="status">lock is locked</p>
+                <button type="button" id="open" class="btn btn-success">
                     open
                 </button>
             </div>
@@ -113,37 +117,33 @@
 <script>
     var map;
     var json;
-    var eamil = document.getElementById("textbox_1").value
-    var url = "locationDB?getdata&email="
-    var full = url.concat(eamil);
+    var email;
+    var url;
+
+    function geteamil() {
+        if (document.getElementById("textbox_1").value != null || document.getElementById("textbox_1").value === "") {
+            email = document.getElementById("textbox_1").value;
+            document.getElementById("loc").disabled = false;
+            document.getElementById("sen").disabled = false;
+            document.getElementById("textbox_1").disabled = true;
+            document.getElementById("signin").disabled = true;
+            getlocationdata()
+        }
+    }
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 53.4808, lng: -2.2426},
             zoom: 5
         });
-       $.getJSON(url, function(json1) {
-            json = json1
-            document.getElementById("locationdata").innerHTML= JSON.stringify(json, null, " ");
-            $.each(json1, function (key, data) {
-                var latLng = new google.maps.LatLng(data.lat, data.lng);
-
-                var marker = new google.maps.Marker({
-                    position: latLng,
-                    map: map,
-                    // icon: icon,
-                    title: data.title
-                });
-
-            });
-        });
     }
 
 
     function getlocationdata() {
-        $.getJSON(full, function(json1) {
+        url = "locationDB?getdata&email=" + email;
+        $.getJSON(url, function (json1) {
             json = json1
-            document.getElementById("locationdata").innerHTML= JSON.stringify(json, null, " ");
+            document.getElementById("locationdata").innerHTML = JSON.stringify(json, null, " ");
             $.each(json1, function (key, data) {
                 var latLng = new google.maps.LatLng(data.lat, data.lng);
 
@@ -158,38 +158,34 @@
         });
     }
 
-
-    var Sjson;
-    var Surl = "sensorDB?getdata&email=hamza_05@hotmail.co.uk"
-
-    function test () {
-
-        $.getJSON(Surl, function(json1) {
-            Sjson = json1
-            document.getElementById("sensordata").innerHTML= JSON.stringify(Sjson, null, " ");
-            $.each(Sjson, function (key, data) {
-                setInterval(function(){
-                    if(Sjson.sensorValue===false) {
-                        document.getElementById("status").innerHTML = "close lock";
-                        document.getElementById("sensordata").innerHTML= JSON.stringify(Sjson, null, " ");
-                    }}, 15000);
+    function getsensordata() {
+        url = "sensorDB?getdata&email=" + email;
+        $.getJSON(url, function (json1) {
+            json = json1
+            document.getElementById("sensordata").innerHTML = JSON.stringify(json1, null, " ");
+            $.each(json1, function (key, data) {
+                setInterval(function () {
+                    if (Sjson.sensorValue === false) {
+                        document.getElementById("status").innerHTML = "lock is locked";
+                        document.getElementById("sensordata").innerHTML = JSON.stringify(json1, null, " ");
+                    }
+                }, 15000);
             })
 
         });
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#open").click(function () {
-            $.post("sensorDB?sensorname=DoorRFID&sensorvalue=true&email=hamza_05@hotmail.co.uk", {},
+            $.post("sensorDB?sensorname=DoorRFID&sensorvalue=true&email=" + email, {},
                 function (data, status) {
                     test();
-                    document.getElementById("status").innerHTML = "open lock";
+                    document.getElementById("status").innerHTML = "lock is open ";
                 });
         });
     })
 
 </script>
-
 
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMAsNr8rNi1ZYb5Sy_jYoQ-pIF4s0mwNM"
