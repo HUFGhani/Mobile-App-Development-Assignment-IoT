@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -25,7 +26,8 @@ public class SensorShow extends Activity {
 
     // URL to get contacts JSON
     String email;
-    String URL;
+    String baseURL = "http://10.182.26.74:8080/IoT_Server/";
+    String url;
 
     // JSON Node names
     private static final String TAG_SensorName = "sensorName";
@@ -59,6 +61,11 @@ public class SensorShow extends Activity {
 
     }
 
+    public void open(View view){
+        new opendoor().execute();
+        new GetSensor().execute();
+    }
+
 
     /**
      * Async task class to get json by making HTTP call
@@ -78,12 +85,12 @@ public class SensorShow extends Activity {
 
         @Override
         protected Void doInBackground(Void... arg0 ) {
-            URL = "http://10.182.26.74:8080/IoT_Server/sensorDB?getdata&email=hamza_05@hotmail.co.uk";
+            url = baseURL+"sensorDB?getdata&email="+email;
             // Creating service handler class instance
             ServiceHandler sh = new ServiceHandler();
 
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(URL, ServiceHandler.GET);
+            String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
 
             Log.d("Response: ", "> " + jsonStr);
 
@@ -152,5 +159,16 @@ public class SensorShow extends Activity {
 
     }
 
+    private class opendoor  extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+            url = baseURL +"sensorDB?sensorname=DoorRFID&sensorvalue=true&email="+email;
+            ServiceHandler sh = new ServiceHandler();
+
+            // Making a request to url and getting response
+            sh.makeServiceCall(url, ServiceHandler.POST);
+            return null;
+        }
+    }
 }
 
