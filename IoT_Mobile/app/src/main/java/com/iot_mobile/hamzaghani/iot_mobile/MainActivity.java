@@ -10,17 +10,27 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.estimote.sdk.SystemRequirementsChecker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.iot_mobile.hamzaghani.iot_mobile.estimote.BeaconID;
+import com.iot_mobile.hamzaghani.iot_mobile.estimote.EstimoteCloudBeaconDetails;
+import com.iot_mobile.hamzaghani.iot_mobile.estimote.EstimoteCloudBeaconDetailsFactory;
+import com.iot_mobile.hamzaghani.iot_mobile.estimote.ProximityContentManager;
+
+import java.util.Arrays;
+
+import static com.google.android.gms.wearable.DataMap.TAG;
 
 public class MainActivity extends Activity implements LocationListener {
 
@@ -35,7 +45,7 @@ public class MainActivity extends Activity implements LocationListener {
     private  double fusedLongitude = 0.0;
 
 
-    String url;
+    String url, url2;
     private static final String baseURL="http://10.182.26.74:8080/IoT_Server/";
     private Dialog pDialog;
 
@@ -43,8 +53,8 @@ public class MainActivity extends Activity implements LocationListener {
 
     String email;
     Button login,map,sensor;
-
-
+    boolean test;
+    private ProximityContentManager proximityContentManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +65,26 @@ public class MainActivity extends Activity implements LocationListener {
         login = (Button) findViewById(R.id.login);
         map = (Button) findViewById(R.id.locaiton);
         sensor = (Button) findViewById(R.id.sensor_status);
+
+        proximityContentManager = new ProximityContentManager(this,
+                Arrays.asList(
+                        new BeaconID("B9407F30-F5F8-466E-AFF9-25556B57FE6D", 28322, 44007)),
+                new EstimoteCloudBeaconDetailsFactory());
+        proximityContentManager.setListener(new ProximityContentManager.Listener() {
+            @Override
+            public void onContentChanged(Object content) {
+
+                Integer backgroundColor;
+                if (content != null) {
+                    EstimoteCloudBeaconDetails beaconDetails = (EstimoteCloudBeaconDetails) content;
+                    test = true;
+
+                } else {
+                    test = false;
+
+                }
+            }
+        });
     }
 
     public void map(View view){
@@ -74,8 +104,6 @@ public class MainActivity extends Activity implements LocationListener {
                 map.setVisibility(View.VISIBLE);
                 sendData2Server();
             }
-
-        }else{
 
         }
     }
@@ -225,6 +253,34 @@ public class MainActivity extends Activity implements LocationListener {
     private void sendData2Server() {
         new sendLocation().execute();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!SystemRequirementsChecker.checkWithDefaultDialogs(this)) {
+            Log.e(TAG, "Can't scan for beacons, some pre-conditions were not met");
+            Log.e(TAG, "Read more about what's required at: http://estimote.github.io/Android-SDK/JavaDocs/com/estimote/sdk/SystemRequirementsChecker.html");
+            Log.e(TAG, "If this is fixable, you should see a popup on the app's screen right now, asking to enable what's necessary");
+        } else {
+            Log.d(TAG, "Starting ProximityContentManager content updates");
+            proximityContentManager.startContentUpdates();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "Stopping ProximityContentManager content updates");
+        proximityContentManager.stopContentUpdates();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        proximityContentManager.destroy();
+    }
+
     private class sendLocation extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -243,11 +299,13 @@ public class MainActivity extends Activity implements LocationListener {
         public void send() {
             if (!(email.equals(null)) || email.equals("")) {
                 url = baseURL + "locationDB?lat=" + getFusedLatitude() + "&lng=" + getFusedLongitude() + "&email=" + email;
+                url2 = baseURL +"sensorname=DoorRFID&sensorvalue="+test+"&email="+email;
                 // Creating service handler class instance
                 ServiceHandler sh = new ServiceHandler();
 
                 // Making a request to url and getting response
                 sh.makeServiceCall(url, ServiceHandler.POST);
+                sh.makeServiceCall(url2, ServiceHandler.POST);
             }
         }
     }
