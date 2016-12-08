@@ -36,7 +36,7 @@ public class MainActivity extends Activity implements LocationListener {
 
 
     String url;
-    private static final String baseURL="http://192.168.0.39:8080/IoT_Server/";
+    private static final String baseURL="http://10.182.26.74:8080/IoT_Server/";
     private Dialog pDialog;
 
     EditText emailAddress;
@@ -82,7 +82,7 @@ public class MainActivity extends Activity implements LocationListener {
 
     public void sensorShow(View view){
         Intent intent = new Intent(MainActivity.this,SensorShow.class);
-        intent.putExtra("email",emailAddress.getText().toString());
+        intent.putExtra("email",email);
         MainActivity.this.startActivity(intent);
     }
 
