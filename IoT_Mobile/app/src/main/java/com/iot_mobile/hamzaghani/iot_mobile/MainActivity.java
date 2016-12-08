@@ -3,13 +3,16 @@ package com.iot_mobile.hamzaghani.iot_mobile;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -18,12 +21,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.gson.Gson;
-import com.iot_mobile.hamzaghani.iot_mobile.model.sensorInfor;
 
 public class MainActivity extends Activity implements LocationListener {
 
-    Gson gson = new Gson();
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
     private static final int REQUEST_LOCATION = 2;
@@ -33,13 +33,17 @@ public class MainActivity extends Activity implements LocationListener {
 
     private double fusedLatitude = 0.0;
     private  double fusedLongitude = 0.0;
-    sensorInfor sensor = new sensorInfor();
+
 
     String url;
-    private static final String baseURL="http://10.0.90.140:8080/IoT_Server/";
+    private static final String baseURL="http://192.168.0.39:8080/IoT_Server/";
     private Dialog pDialog;
 
-    TextView test;
+    EditText emailAddress;
+
+    String email;
+    Button login,map,sensor;
+
 
 
     @Override
@@ -47,15 +51,41 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        test =(TextView) findViewById(R.id.test);
-
-        if (checkPlayServices()) {
-            startFusedLocation();
-            registerRequestUpdate(this);
-        }
-
+        emailAddress =  (EditText) findViewById(R.id.emailAddress);
+        login = (Button) findViewById(R.id.login);
+        map = (Button) findViewById(R.id.locaiton);
+        sensor = (Button) findViewById(R.id.sensor_status);
     }
+
+    public void map(View view){
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        MainActivity.this.startActivity(intent);
+    }
+    public void login(View view){
+
+        email = emailAddress.getText().toString();
+        if (email != null && email!=  "" ) {
+            if (checkPlayServices()) {
+                startFusedLocation();
+                registerRequestUpdate(this);
+                emailAddress.setVisibility(View.INVISIBLE);
+                login.setVisibility(View.INVISIBLE);
+                sensor.setVisibility(View.VISIBLE);
+                map.setVisibility(View.VISIBLE);
+                sendData2Server();
+            }
+
+        }else{
+
+        }
+    }
+
+    public void sensorShow(View view){
+        Intent intent = new Intent(MainActivity.this,SensorShow.class);
+        intent.putExtra("email",emailAddress.getText().toString());
+        MainActivity.this.startActivity(intent);
+    }
+
 
     @Override
     protected void onStop() {
@@ -166,21 +196,15 @@ public class MainActivity extends Activity implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        setFusedLatitude(location.getLatitude());
-        setFusedLongitude(location.getLongitude());
-
-        sendData2Server();
-        receiveDataFromServer();
+           setFusedLatitude(location.getLatitude());
+            setFusedLongitude(location.getLongitude());
+        if (!(email.equals(null)) || email.equals("")) {
+            sendData2Server();
+        }
 
     }
 
-    private void receiveDataFromServer() {
-        new receiveData().execute();
-    }
 
-    private void sendData2Server() {
-        new sendLocation().execute();
-    }
 
     public void setFusedLatitude(double lat) {
         fusedLatitude = lat;
@@ -198,46 +222,35 @@ public class MainActivity extends Activity implements LocationListener {
         return fusedLongitude;
     }
 
-
+    private void sendData2Server() {
+        new sendLocation().execute();
+    }
     private class sendLocation extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            url = baseURL +"locationDB?lat="+ getFusedLatitude()+"&lon="+ getFusedLongitude();
-            // Creating service handler class instance
-            ServiceHandler sh = new ServiceHandler();
+            try {
+                send();
+                Thread.sleep(60000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-            // Making a request to url and getting response
-            sh.makeServiceCall(url, ServiceHandler.POST);
 
             return null;
         }
+
+        public void send() {
+            if (!(email.equals(null)) || email.equals("")) {
+                url = baseURL + "locationDB?lat=" + getFusedLatitude() + "&lng=" + getFusedLongitude() + "&email=" + email;
+                // Creating service handler class instance
+                ServiceHandler sh = new ServiceHandler();
+
+                // Making a request to url and getting response
+                sh.makeServiceCall(url, ServiceHandler.POST);
+            }
+        }
     }
 
-    private class receiveData extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            url =baseURL + "?sensorname=DoorRFID&sensorvalue=true&email=hamza_05@hotmail.co.uk";
-
-            ServiceHandler sh = new ServiceHandler();
-
-            String jsonString = sh.makeServiceCall(url,ServiceHandler.GET);
-
-             sensor = gson.fromJson(jsonString, sensorInfor.class);
-            System.out.println(sensor);
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
-
-
-            test.setText(sensor.getEmail());
-        }
-
-    }
 }

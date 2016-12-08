@@ -57,7 +57,7 @@
                 </div>
                 <button type="button" onclick="geteamil()" id="signin" class="btn btn-success">Sign in</button>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-success" data-toggle="modal" id="loc" data-target="#locations"
+                <button type="button" class="btn btn-success" data-toggle="modal" id="loc" onclick="getlocationdata()" data-target="#locations"
                         disabled>
                     See locaiton JSON
                 </button>
@@ -67,7 +67,6 @@
                     sensor
                 </button>
             </form>
-
         </div><!--/.navbar-collapse -->
     </div>
 </nav>
@@ -97,7 +96,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                <h4 class="modal-title" id="myModalLabel">Senor</h4>
             </div>
             <div class="modal-body">
                 <pre id="sensordata">
@@ -141,9 +140,11 @@
 
     function getlocationdata() {
         url = "locationDB?getdata&email=" + email;
+        setInterval(function () {
         $.getJSON(url, function (json1) {
             json = json1
             document.getElementById("locationdata").innerHTML = JSON.stringify(json, null, " ");
+
             $.each(json1, function (key, data) {
                 var latLng = new google.maps.LatLng(data.lat, data.lng);
 
@@ -156,6 +157,7 @@
 
             });
         });
+        }, 1000);
     }
 
     function getsensordata() {
@@ -169,7 +171,7 @@
                         document.getElementById("status").innerHTML = "lock is locked";
                         document.getElementById("sensordata").innerHTML = JSON.stringify(json1, null, " ");
                     }
-                }, 15000);
+                }, 1000);
             })
 
         });

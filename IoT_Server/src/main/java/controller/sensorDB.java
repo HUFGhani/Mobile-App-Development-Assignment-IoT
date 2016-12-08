@@ -67,7 +67,7 @@ public class sensorDB extends HttpServlet {
                 PrintWriter out = response.getWriter();
                 out.print(json);
                 out.close();
-                System.out.println(json);
+                log.info(json);
             }
         }
 

@@ -38,7 +38,7 @@ public class locationDB extends HttpServlet {
         getData = request.getParameter("getdata");
 
 
-        if (getData==null){
+        if (getData ==null){
             lat = request.getParameter("lat");
             lng = request.getParameter("lng");
             email = request.getParameter("email");
@@ -49,7 +49,6 @@ public class locationDB extends HttpServlet {
                 BigDecimal lngBD = new BigDecimal(lng);
                 location.setEmail(email);
                 location.setLat(latBD);
-                System.out.println(latBD);
                 location.setLng(lngBD);
                 location.setTimestape(date);
                 infor.add(location);
@@ -72,7 +71,7 @@ public class locationDB extends HttpServlet {
             PrintWriter out = response.getWriter();
             out.print(json);
             out.close();
-            System.out.println(json);
+            log.info(json);
             }
         }
 

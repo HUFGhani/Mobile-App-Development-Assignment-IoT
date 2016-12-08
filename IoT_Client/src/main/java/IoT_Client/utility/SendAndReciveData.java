@@ -15,11 +15,11 @@ import java.net.URL;
  */
 public class SendAndReciveData {
     static String mainURL= "http://localhost:8080/IoT_Server/sensorDB";
-    URL url;
-    HttpURLConnection conn;
-    BufferedReader rd;
-    String fullURL ;
-    boolean getTrue;
+    private URL url;
+    private HttpURLConnection conn;
+    private BufferedReader rd;
+    private String fullURL ;
+    private boolean getTrue;
 
 
 
@@ -74,9 +74,6 @@ public class SendAndReciveData {
         }
 
         return null;
-
-
-
     }
 
 

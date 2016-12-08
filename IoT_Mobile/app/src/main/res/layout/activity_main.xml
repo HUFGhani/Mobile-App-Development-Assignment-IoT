@@ -1,23 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
 
-    <TextView
-        android:text="TextView"
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/test"
-        android:layout_marginLeft="21dp"
-        android:layout_marginStart="21dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="32dp" />
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/emailAddress"
+        android:gravity="top"
+        android:layout_centerHorizontal="true" />
 
+    <Button
+        android:text="show location history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locaiton"
+        android:layout_below="@+id/sensor_status"
+        android:layout_alignLeft="@+id/sensor_status"
+        android:layout_alignStart="@+id/sensor_status"
+        android:layout_alignRight="@+id/sensor_status"
+        android:layout_alignEnd="@+id/sensor_status"
+        android:onClick="map"
+        android:visibility="invisible" />
+
+    <Button
+        android:text="login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/emailAddress"
+        android:layout_toRightOf="@+id/emailAddress"
+        android:layout_toEndOf="@+id/emailAddress"
+        android:id="@+id/login"
+        android:onClick="login"
+        android:imeOptions="actionDone"/>
+
+    <Button
+        android:text="Sensor Status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sensor_status"
+        android:onClick="sensorShow"
+        android:layout_below="@+id/emailAddress"
+        android:layout_toLeftOf="@+id/login"
+        android:layout_toStartOf="@+id/login"
+        android:layout_marginTop="59dp"
+        android:visibility="invisible" />
 
 </RelativeLayout>
