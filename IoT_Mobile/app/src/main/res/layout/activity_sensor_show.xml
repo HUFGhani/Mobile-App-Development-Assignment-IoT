@@ -19,7 +19,8 @@
         android:textAlignment="center"
         android:typeface="sans"
         android:textSize="36sp"
-        android:textStyle="normal|bold" />
+        android:textStyle="normal|bold"
+        android:text="door lock open"/>
 
 
     <Button

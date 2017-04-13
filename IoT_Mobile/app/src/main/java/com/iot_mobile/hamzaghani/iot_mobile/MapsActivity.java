@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG_Latitude = "lat";
     private static final String TAG_TimeStamp= "timestape";
     // URL to get contacts JSON
-    String url ="http://10.0.44.45:8080/IoT_Server/locationDB?getdata&email=hamza_05@hotmail.co.uk";
+    String url ="http://192.168.0.39:8080/IoT_Server/locationDB?getdata&email=hamza_05@hotmail.co.uk";
     MarkerOptions marker;
     ArrayList<HashMap<String, String>> location;
 
