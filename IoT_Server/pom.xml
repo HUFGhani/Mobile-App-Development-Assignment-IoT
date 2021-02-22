@@ -10,7 +10,7 @@
     <properties>
         <jdk.version>1.7</jdk.version>
         <jstl.version>1.2</jstl.version>
-        <junit.version>4.11</junit.version>
+        <junit.version>4.13.1</junit.version>
     </properties>
     <dependencies>
         <dependency>
